@@ -319,11 +319,12 @@ function vInicio() {
   const D = S.d.dashboard, I = D.indicadores;
   const chg = (x, alReves) => x == null ? 'Sin datos del mes anterior' : `<span class="${(x > 0) !== !!alReves ? 'ok' : x ? 'bad' : ''}">${x >= 0 ? '▲' : '▼'} ${pc(Math.abs(x))}</span> vs. mes anterior`;
   const cats = D.categorias.filter(c => c.monto > 0 || c.anterior > 0);
+  const tengo = S.d.cuentas.filter(c => c.tipo !== 'Crédito').reduce((s, c) => s + c.saldo, 0);
   return `<div class="grid">
   <div class="stats full">
     <div class="card stat"><div><div class="eyebrow">Ingresos del mes</div><div class="chg">${chg(D.cambio.ingresos)}</div></div><div class="num">${fm(D.ingresos)}</div></div>
     <div class="card stat"><div><div class="eyebrow">Gastos del mes</div><div class="chg">${chg(D.cambio.gastos, true)}</div></div><div class="num">${fm(D.gastos)}</div></div>
-    <div class="card stat"><div><div class="eyebrow">Me queda</div><div class="chg">${chg(D.cambio.balance)}</div></div><div class="num ${D.balance < 0 ? 'bad' : 'ok'}">${fm(D.balance)}</div></div>
+    <div class="card stat"><div><div class="eyebrow">Me queda</div><div class="chg">Débito + efectivo hoy · balance del mes <span class="${D.balance < 0 ? 'bad' : 'ok'}">${D.balance < 0 ? '−' : '+'}${fm(Math.abs(D.balance))}</span></div></div><div class="num ${tengo < 0 ? 'bad' : 'ok'}">${fm(tengo)}</div></div>
   </div>
   <section class="card span2"><h2>Gastos por categoría</h2>
     ${D.gastos > 0 ? `<div class="dona"><div class="dona-c"><canvas id="dona" role="img" aria-label="Gráfica de dona de gastos por categoría"></canvas></div><div>` : `<p class="vacio">Aún no hay gastos en ${mesNombre(S.mes)}.</p><div><div>`}
