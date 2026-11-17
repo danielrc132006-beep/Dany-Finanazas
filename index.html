@@ -122,7 +122,6 @@ label.f small,.hint{display:block;font-size:13px;color:var(--helper);margin-top:
 .tools{display:grid;gap:8px;grid-template-columns:1fr 1fr;margin-bottom:12px}.tools input{grid-column:1/-1}
 .badge{background:var(--fog);border-radius:9999px;padding:3px 9px;font:500 12px/1.2 var(--sans);color:var(--caption);white-space:nowrap}
 .badge.ok{background:#e8f9eb;color:var(--ok)}
-.snoopy{width:76px;height:auto;margin:-10px -4px -14px 0;mix-blend-mode:multiply;flex:none}
 
 /* Tarjeta bancaria */
 .bank{position:relative;aspect-ratio:1.586;max-width:360px;border-radius:16px;background:linear-gradient(135deg,var(--blue),var(--cobalt));color:#fff;padding:18px 20px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;margin-bottom:16px;box-shadow:rgba(20,90,255,.3) 0 14px 30px -14px}
@@ -354,7 +353,7 @@ function vInicio() {
   </section>
   <section class="card span2"><div class="head"><h2>Últimos 12 meses</h2><button class="pill" data-act="verIngresos" aria-pressed="${S.verIngresos}">${S.verIngresos ? '✓ ' : ''}Ingresos</button></div>
     <div class="barras"><canvas id="barras" role="img" aria-label="Gráfica de barras de gastos de los últimos 12 meses"></canvas></div></section>
-  <section class="card"><div class="head"><h2>Indicadores</h2><img class="snoopy" src="snoopy.png" width="76" height="89" alt=""></div>
+  <section class="card"><h2>Indicadores</h2>
     <div class="kv"><span>Gasto promedio diario</span><span>${fm(I.promedioDiario)}</span></div>
     <div class="kv"><span>Proyección a fin de mes</span><span>${fm(I.proyeccion)}</span></div>
     <div class="kv"><span>Categoría con más gasto</span><span>${I.topCategoria ? `${I.topCategoria.icono} ${esc(I.topCategoria.nombre)}` : '—'}</span></div>
