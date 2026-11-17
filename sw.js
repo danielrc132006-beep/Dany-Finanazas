@@ -1,6 +1,6 @@
 // Service worker mínimo: primero la red (siempre la versión más nueva) y, si no hay internet, la copia guardada.
 // Las llamadas a la API son POST y no pasan por aquí.
-const CACHE = 'dany-finanzas-v2';
+const CACHE = 'dany-finanzas-v3';
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
 self.addEventListener('fetch', e => {

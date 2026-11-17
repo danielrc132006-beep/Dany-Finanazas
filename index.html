@@ -11,8 +11,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Dany Finanzas">
 <link rel="manifest" href="manifest.json">
-<link rel="icon" href="icon-192.png" type="image/png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="logo-192.png" type="image/png">
+<link rel="apple-touch-icon" href="logo-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -191,7 +191,7 @@ label.f small,.hint{display:block;font-size:13px;color:var(--helper);margin-top:
 <body>
 <div class="app"><div class="wrap" id="main"></div></div>
 <nav id="nav" hidden aria-label="Secciones">
-  <div class="marca"><img src="icon-192.png" width="32" height="32" alt="">Dany Finanzas</div>
+  <div class="marca"><img src="logo-192.png" width="32" height="32" alt="">Dany Finanzas</div>
   <button data-act="nav" data-v="inicio"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Inicio</button>
   <button data-act="nav" data-v="movs"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg>Movimientos</button>
   <button data-act="nav" data-v="tarjetas"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 10h19M6 15h4"/></svg>Tarjetas</button>
@@ -733,7 +733,7 @@ document.addEventListener('change', async e => {
 // ---------- Conectar ----------
 function pantallaConectar() {
   $('#nav').hidden = $('#fab').hidden = true;
-  $('#main').innerHTML = `<form class="conectar" id="conectar" novalidate><img src="icon-192.png" width="72" height="72" alt=""><h1>Dany <span class="azul">Finanzas</span></h1>
+  $('#main').innerHTML = `<form class="conectar" id="conectar" novalidate><img src="logo-192.png" width="72" height="72" alt=""><h1>Dany <span class="azul">Finanzas</span></h1>
     <p>Conecta la app con tu Google Sheet. Solo se hace una vez en cada dispositivo.</p>
     <label class="f" for="cUrl"><span>URL del Web App</span><input id="cUrl" type="url" inputmode="url" autocomplete="off" placeholder="https://script.google.com/macros/s/…/exec"><small>La copias al publicar el Apps Script; termina en /exec.</small></label>
     <label class="f" for="cTok"><span>Token</span><input id="cTok" type="password" autocomplete="off"><small>Está en tu Google Sheet, hoja Config, celda B2.</small></label>
