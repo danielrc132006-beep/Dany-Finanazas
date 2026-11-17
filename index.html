@@ -142,7 +142,12 @@ label.f small,.hint{display:block;font-size:13px;color:var(--helper);margin-top:
 .monto input{border:0;background:none;border-radius:0;box-shadow:none;text-align:center;font:600 44px/1.2 var(--sans);letter-spacing:-.03em;color:var(--ink);padding:4px 0;min-height:64px}
 .cats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:16px}
 .cats button{min-height:68px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 2px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font:500 11px/1.15 var(--sans);color:var(--caption);overflow-wrap:anywhere;text-align:center}
-.cats button b{font-size:20px;font-weight:400}
+.cats button b{font-size:20px;font-weight:400;display:grid;place-items:center}
+.ic{width:20px;height:20px;flex:none;vertical-align:-4px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.well{color:var(--caption)}
+.icos{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:6px}
+.icos button{height:44px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--caption);display:grid;place-items:center;cursor:pointer}
+.icos button[aria-pressed=true]{border-color:var(--blue);color:var(--blue);background:var(--wash)}
 .cats button.on{border-color:var(--blue);color:var(--blue);background:var(--wash)}
 .dos{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 
@@ -277,11 +282,56 @@ async function enviarCola() {
 }
 window.addEventListener('online', enviarCola);
 
+// ---------- Iconos de categoría (mismo trazo que la barra de navegación) ----------
+const ICS = {
+  'súper': '<path d="M3 4h2l2.2 10.2a1 1 0 0 0 1 .8h8.6a1 1 0 0 0 1-.8L19.5 8H6.2"/><circle cx="9" cy="19" r="1.3"/><circle cx="17" cy="19" r="1.3"/>',
+  restaurante: '<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 21V3c-2 1-3 3.5-3 7h3"/>',
+  'café': '<path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM17 10.5h1.5a2.5 2.5 0 0 1 0 5H17M8 3.5V6M12 3.5V6"/>',
+  transporte: '<path d="M4 15.5V12l2-5.5h12L20 12v3.5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1zM4 12h16M7 16.5V19M17 16.5V19"/><circle cx="7.5" cy="14" r=".6"/><circle cx="16.5" cy="14" r=".6"/>',
+  gasolina: '<path d="M5 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16M3.5 21h13M5 10h10M15 8l3 3v6.5a1.5 1.5 0 0 0 3 0V9l-3-3"/>',
+  casa: '<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  servicios: '<path d="M13 3L5 13.5h6L10 21l8-10.5h-6z"/>',
+  internet: '<path d="M2.5 9a14 14 0 0 1 19 0M5.5 12.5a9.5 9.5 0 0 1 13 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.2" r=".6"/>',
+  celular: '<rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/>',
+  salud: '<path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.2 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/><path d="M8 12.5h2.2l1.3-2.5 2 4.5 1.2-2h1.3"/>',
+  'educación': '<path d="M2.5 9L12 4.5 21.5 9 12 13.5z"/><path d="M6.5 11v4.5c0 1.5 2.5 3 5.5 3s5.5-1.5 5.5-3V11M21.5 9v5"/>',
+  entretenimiento: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 5v14M17 5v14M3 9.5h4M3 14.5h4M17 9.5h4M17 14.5h4"/>',
+  'suscripción': '<path d="M17 2.5l3 3-3 3M4 11.5v-2a4 4 0 0 1 4-4h12M7 21.5l-3-3 3-3M20 12.5v2a4 4 0 0 1-4 4H4"/>',
+  ropa: '<path d="M8.5 3.5L4 6l-1.5 4 3 1.2v9.3h13v-9.3l3-1.2L20 6l-4.5-2.5a3.5 3.5 0 0 1-7 0z"/>',
+  hogar: '<path d="M5 11V8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3M3 13a2 2 0 0 1 4 0v1.5h10V13a2 2 0 0 1 4 0v4.5H3zM5 17.5V20M19 17.5V20"/>',
+  regalo: '<rect x="3.5" y="8" width="17" height="4" rx="1"/><path d="M5 12v8.5h14V12M12 8v12.5M12 8c-1-3-5-4.5-5.5-2S10 8 12 8zm0 0c1-3 5-4.5 5.5-2S14 8 12 8z"/>',
+  mascota: '<circle cx="6" cy="11" r="1.7"/><circle cx="9.5" cy="6.5" r="1.7"/><circle cx="14.5" cy="6.5" r="1.7"/><circle cx="18" cy="11" r="1.7"/><path d="M12 12c-3 0-5.5 4-5.5 6a2 2 0 0 0 2.5 2c1-.3 2-.6 3-.6s2 .3 3 .6a2 2 0 0 0 2.5-2c0-2-2.5-6-5.5-6z"/>',
+  viaje: '<rect x="3.5" y="7" width="17" height="12.5" rx="2"/><path d="M9 7V5a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 5v2M8 7v12.5M16 7v12.5"/>',
+  deporte: '<path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/>',
+  banco: '<path d="M3 9.5L12 4l9 5.5zM5 9.5v8M9.7 9.5v8M14.3 9.5v8M19 9.5v8M3 20.5h18"/>',
+  'comisión': '<path d="M18.5 5.5l-13 13"/><circle cx="7" cy="7" r="2.2"/><circle cx="17" cy="17" r="2.2"/>',
+  sueldo: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7M3 12.5h18M11 12.5v2h2v-2"/>',
+  freelance: '<rect x="4.5" y="5" width="15" height="10.5" rx="1.5"/><path d="M2.5 19h19"/>',
+  ventas: '<path d="M3.5 12.5v-8a1 1 0 0 1 1-1h8l8 8a1.4 1.4 0 0 1 0 2l-7 7a1.4 1.4 0 0 1-2 0z"/><circle cx="8" cy="8" r="1.3"/>',
+  reembolso: '<path d="M9 14.5l-5-5 5-5M4 9.5h10.5a5.5 5.5 0 0 1 0 11H11"/>',
+  intereses: '<path d="M3 17.5l6-6 4 4 8-8M15 7.5h6v6"/>',
+  ahorro: '<ellipse cx="12" cy="6.5" rx="7" ry="3"/><path d="M5 6.5v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5M5 11.5v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/>',
+  efectivo: '<rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 9.5h.01M18 14.5h.01"/>',
+  tarjeta: '<rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 10h19M6 15h4"/>',
+  transferencia: '<path d="M16.5 3.5l4 4-4 4M20.5 7.5h-13M7.5 12.5l-4 4 4 4M3.5 16.5h13"/>',
+  ajuste: '<path d="M12 3.5v17M7.5 20.5h9M4.5 7h15M6.5 7l-3 6.5a3 3 0 0 0 6 0zM17.5 7l-3 6.5a3 3 0 0 0 6 0z"/>',
+  otros: '<path d="M3.5 7.5L12 3.5l8.5 4v9L12 20.5l-8.5-4zM3.5 7.5l8.5 4 8.5-4M12 11.5v9"/>'
+};
+// Las categorías que ya tienen emoji en la hoja se muestran con su icono equivalente, sin tocar los datos.
+const EMO = {};
+Object.entries({ 'súper': '🛒 🧺 🥦 🍎', restaurante: '🍽 🍔 🍕 🌮 🍣 🍜', 'café': '☕ 🍺 🍷', transporte: '🚗 🚕 🚌 🚇 🚙 🛵', gasolina: '⛽', casa: '🏠 🏡 🔑',
+  servicios: '💡 ⚡ 🚰 🔌', internet: '📶 🌐 📡', celular: '📱 ☎', salud: '🏥 💊 ❤ 🩺 🦷', 'educación': '🎓 📚 ✏ 📖', entretenimiento: '🎬 🎮 🎉 🎟 🎵 🍿',
+  'suscripción': '🔁 📺 🔄', ropa: '👕 👗 👟 👖', hogar: '🛋 🧹 🛠 🔧', regalo: '🎁 🎀', mascota: '🐶 🐾 🐱 🐕', viaje: '✈ 🧳 🏖 🗺', deporte: '💪 🏋 ⚽ 🏃',
+  banco: '🏦', 'comisión': '💸 🧾 %', sueldo: '💼', freelance: '💻', ventas: '🏷 🛍', reembolso: '↩ 🔙', intereses: '📈 📊', ahorro: '🐷 🪙 💰',
+  efectivo: '💵', tarjeta: '💳', transferencia: '⇄ 🔀', ajuste: '⚖', otros: '📦 ❓ ➕' }).forEach(([k, s]) => s.split(' ').forEach(e => { EMO[e] = k; }));
+const icoKey = v => { v = String(v || '').replace(/️/g, ''); return ICS[v] ? v : EMO[v]; };
+function ic(v) { const k = icoKey(v); return k ? `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICS[k]}</svg>` : esc(v || '📦'); }
+
 // ---------- Datos de apoyo ----------
 const ctas = () => S.d.init.cuentas.filter(c => si(c.activa));
 const ctaDe = n => S.d.init.cuentas.find(c => c.nombre === n) || {};
-const catDe = (n, t) => S.d.init.categorias.find(c => c.nombre === n && c.tipo === t) || { icono: '📦', color: '#94a3b8' };
-function icono(m) { return m.tipo === 'Transferencia' ? '⇄' : m.tipo === 'Pago tarjeta' ? '💳' : catDe(m.categoria, m.tipo).icono; }
+const catDe = (n, t) => S.d.init.categorias.find(c => c.nombre === n && c.tipo === t) || { icono: 'otros', color: '#94a3b8' };
+function icono(m) { return ic(m.tipo === 'Transferencia' ? 'transferencia' : m.tipo === 'Pago tarjeta' ? 'tarjeta' : catDe(m.categoria, m.tipo).icono); }
 function monto(m) {
   if (m.tipo === 'Gasto') return `<span class="amt">−${fm(m.monto)}</span>`;
   if (m.tipo === 'Ingreso') return `<span class="amt ok">+${fm(m.monto)}</span>`;
@@ -323,8 +373,8 @@ function avisos() {
       : `<div class="alerta">Paga ${fm(c.pagoSinIntereses)} de ${esc(c.nombre)} ${dias(c.diasParaLimite)} (límite ${fd(c.fechaLimite)}) para no generar intereses.</div>`;
   });
   if (S.vista === 'inicio') S.d.dashboard.presupuestos.filter(p => p.pct >= .8).forEach(p => {
-    h += p.pct >= 1 ? `<div class="alerta bad">${p.icono} Rebasaste el presupuesto de ${esc(p.nombre)}: ${fm(p.gastado)} de ${fm(p.presupuesto)}.</div>`
-      : `<div class="alerta">${p.icono} Llevas ${pc(p.pct)} del presupuesto de ${esc(p.nombre)}.</div>`;
+    h += p.pct >= 1 ? `<div class="alerta bad">${ic(p.icono)} Rebasaste el presupuesto de ${esc(p.nombre)}: ${fm(p.gastado)} de ${fm(p.presupuesto)}.</div>`
+      : `<div class="alerta">${ic(p.icono)} Llevas ${pc(p.pct)} del presupuesto de ${esc(p.nombre)}.</div>`;
   });
   return h;
 }
@@ -343,11 +393,11 @@ function vInicio() {
   </div>
   <section class="card span2"><h2>Gastos por categoría</h2>
     ${D.gastos > 0 ? `<div class="dona"><div class="dona-c"><canvas id="dona" role="img" aria-label="Gráfica de dona de gastos por categoría"></canvas></div><div>` : `<p class="vacio">Aún no hay gastos en ${mesNombre(S.mes)}.</p><div><div>`}
-    ${cats.map(c => { const dif = c.monto - c.anterior; return `<button class="row" data-act="verCat" data-c="${esc(c.nombre)}"><span class="well" style="border-color:${esc(c.color)}" aria-hidden="true">${c.icono}</span>
+    ${cats.map(c => { const dif = c.monto - c.anterior; return `<button class="row" data-act="verCat" data-c="${esc(c.nombre)}"><span class="well" style="border-color:${esc(c.color)}" aria-hidden="true">${ic(c.icono)}</span>
       <span class="tx"><div class="t1">${esc(c.nombre)}</div><div class="t2">${pc(c.pct)}${c.anterior ? ` · ${dif >= 0 ? '+' : '−'}${fm(Math.abs(dif))} vs. mes anterior` : ''}</div></span><span class="amt">${fm(c.monto)}</span></button>`; }).join('')}
     </div></div></section>
   <section class="card"><h2>Mis cuentas</h2>
-    ${S.d.cuentas.map(c => `<button class="row" data-act="nav" data-v="tarjetas"><span class="well" style="border-color:${esc(c.color)}" aria-hidden="true">${c.tipo === 'Crédito' ? '💳' : c.tipo === 'Efectivo' ? '💵' : '🏦'}</span>
+    ${S.d.cuentas.map(c => `<button class="row" data-act="nav" data-v="tarjetas"><span class="well" style="border-color:${esc(c.color)}" aria-hidden="true">${ic(c.tipo === 'Crédito' ? 'tarjeta' : c.tipo === 'Efectivo' ? 'efectivo' : 'banco')}</span>
       <span class="tx"><div class="t1">${esc(c.nombre)}</div><div class="t2">${c.tipo === 'Crédito' ? `Disponible ${fm(c.disponible)}` : c.tipo}</div></span>
       <span class="amt">${c.tipo === 'Crédito' ? `<span class="muted">Debo</span> ${fm(c.saldo)}` : fm(c.saldo)}</span></button>`).join('')}
   </section>
@@ -356,11 +406,11 @@ function vInicio() {
   <section class="card"><h2>Indicadores</h2>
     <div class="kv"><span>Gasto promedio diario</span><span>${fm(I.promedioDiario)}</span></div>
     <div class="kv"><span>Proyección a fin de mes</span><span>${fm(I.proyeccion)}</span></div>
-    <div class="kv"><span>Categoría con más gasto</span><span>${I.topCategoria ? `${I.topCategoria.icono} ${esc(I.topCategoria.nombre)}` : '—'}</span></div>
+    <div class="kv"><span>Categoría con más gasto</span><span>${I.topCategoria ? `${ic(I.topCategoria.icono)} ${esc(I.topCategoria.nombre)}` : '—'}</span></div>
     <div class="kv"><span>Tasa de ahorro</span><span class="${I.tasaAhorro < 0 ? 'bad' : ''}">${I.tasaAhorro == null ? '—' : pc(I.tasaAhorro)}</span></div>
   </section>
   <section class="card full"><div class="head"><h2>Presupuestos</h2>${D.presupuestos.length ? '<button class="pill" data-act="irSub" data-s="categorias">Editar</button>' : ''}</div>
-    ${D.presupuestos.length ? D.presupuestos.map(p => `<div style="margin-bottom:14px"><div class="kv" style="border:0;padding:0"><span style="color:var(--body)">${p.icono} ${esc(p.nombre)}</span><span>${fm(p.gastado)} <span class="muted">de ${fm(p.presupuesto)}</span></span></div>
+    ${D.presupuestos.length ? D.presupuestos.map(p => `<div style="margin-bottom:14px"><div class="kv" style="border:0;padding:0"><span style="color:var(--body)">${ic(p.icono)} ${esc(p.nombre)}</span><span>${fm(p.gastado)} <span class="muted">de ${fm(p.presupuesto)}</span></span></div>
       <div class="bar"><i class="${p.pct >= 1 ? 'bad' : p.pct >= .8 ? 'warn' : ''}" style="width:${Math.min(p.pct, 1) * 100}%"></i></div></div>`).join('')
       : '<div class="vacio">Define tus presupuestos<br><span class="hint">Ponle un tope mensual a tus categorías y aquí verás cuánto llevas.</span><button class="btn" data-act="irSub" data-s="categorias">Configurar presupuestos</button></div>'}
   </section></div>`;
@@ -477,7 +527,7 @@ function vMsi() {
 }
 function vRec() {
   const l = S.d.recurrentes;
-  return `<section class="card">${l.length ? l.map(r => `<button class="row" data-act="rec" data-id="${esc(r.id)}"><span class="well" aria-hidden="true">${catDe(r.categoria, r.tipo).icono}</span>
+  return `<section class="card">${l.length ? l.map(r => `<button class="row" data-act="rec" data-id="${esc(r.id)}"><span class="well" aria-hidden="true">${ic(catDe(r.categoria, r.tipo).icono)}</span>
     <span class="tx"><div class="t1">${esc(r.descripcion)}${si(r.activo) ? '' : ' <span class="badge">Pausado</span>'}</div><div class="t2">${esc(r.frecuencia)} · próximo ${fd(r.proximaFecha)} · ${esc(r.cuenta)}</div></span>
     ${monto(r)}</button>`).join('') : '<p class="vacio">Sin movimientos recurrentes.<br><span class="hint">Agrega tu sueldo, renta o suscripciones y se registrarán solos cada día que toque.</span></p>'}</section>
     <p style="margin-top:16px"><button class="btn" data-act="rec">+ Nuevo recurrente</button></p>`;
@@ -494,7 +544,7 @@ function vMetas() {
 }
 function vCats() {
   return ['Gasto', 'Ingreso'].map(t => `<section class="card" style="margin-bottom:16px"><h2>${t === 'Gasto' ? 'Gastos' : 'Ingresos'}</h2>` +
-    S.d.init.categorias.filter(c => c.tipo === t).map(c => `<button class="row" data-act="cat" data-c="${esc(c.nombre)}" data-t="${t}"><span class="well" style="border-color:${esc(c.color)}" aria-hidden="true">${c.icono}</span>
+    S.d.init.categorias.filter(c => c.tipo === t).map(c => `<button class="row" data-act="cat" data-c="${esc(c.nombre)}" data-t="${t}"><span class="well" style="border-color:${esc(c.color)}" aria-hidden="true">${ic(c.icono)}</span>
       <span class="tx"><div class="t1">${esc(c.nombre)}${si(c.activa) ? '' : ' <span class="badge">Inactiva</span>'}</div>${t === 'Gasto' ? `<div class="t2">${c.presupuesto ? 'Presupuesto ' + fm(c.presupuesto) : 'Sin presupuesto'}</div>` : ''}</span><span class="muted">›</span></button>`).join('') +
     '</section>').join('') + '<p><button class="btn" data-act="cat">+ Nueva categoría</button></p>';
 }
@@ -547,7 +597,7 @@ function pintarMov(foco) {
   modal(F.id ? 'Editar movimiento' : 'Nuevo movimiento', `<form id="fmov" novalidate>
     <div class="seg" role="group" aria-label="Tipo de movimiento">${['Gasto', 'Ingreso', 'Transferencia', 'Pago tarjeta'].map(t => `<button type="button" data-act="fTipo" data-t="${t}" class="${t === F.tipo ? 'on' : ''}" aria-pressed="${t === F.tipo}">${t}</button>`).join('')}</div>
     <div class="monto"><span aria-hidden="true">$</span><input id="mMonto" inputmode="decimal" autocomplete="off" placeholder="0.00" aria-label="Monto" value="${esc(F.monto)}"></div>
-    ${gi ? `<div class="cats" role="group" aria-label="Categoría">${cats.map(c => `<button type="button" data-act="fCat" data-c="${esc(c.nombre)}" class="${c.nombre === F.categoria ? 'on' : ''}" aria-pressed="${c.nombre === F.categoria}"><b aria-hidden="true">${c.icono}</b>${esc(c.nombre)}</button>`).join('')}</div>` : ''}
+    ${gi ? `<div class="cats" role="group" aria-label="Categoría">${cats.map(c => `<button type="button" data-act="fCat" data-c="${esc(c.nombre)}" class="${c.nombre === F.categoria ? 'on' : ''}" aria-pressed="${c.nombre === F.categoria}"><b aria-hidden="true">${ic(c.icono)}</b>${esc(c.nombre)}</button>`).join('')}</div>` : ''}
     <div class="${gi ? '' : 'dos'}"><label class="f"><span>${gi ? (F.tipo === 'Gasto' ? 'Pagado con' : 'Cuenta que recibe') : 'De'}</span>${sel('mOrigen', origenes, F.origen)}</label>
     ${gi ? '' : `<label class="f"><span>A</span>${sel('mDestino', destinos, F.destino)}</label>`}</div>
     ${msiOk ? `<label class="check"><input type="checkbox" id="mMsi" ${F.msi ? 'checked' : ''}><span>¿Es a meses sin intereses?</span></label>
@@ -597,6 +647,9 @@ function abrirForm(o) {
   const v = o.valores || {};
   modal(o.titulo, `${o.nota ? `<p class="hint" style="margin:0 0 16px">${esc(o.nota)}</p>` : ''}<form id="gf" novalidate>${o.campos.map(c => {
     const id = 'gf_' + c.k, val = v[c.k] != null && v[c.k] !== '' ? v[c.k] : (c.def != null ? c.def : '');
+    if (c.type === 'icono') { const sel = icoKey(val); // un emoji sin equivalente se conserva hasta que elijas otro
+      return `<div style="margin-bottom:14px"><span id="${id}" style="display:block;font:500 13px/1 var(--sans);color:var(--caption);margin-bottom:8px">${esc(c.label)}</span><input type="hidden" name="${c.k}" value="${esc(val)}">
+        <div class="icos" role="group" aria-labelledby="${id}">${Object.keys(ICS).map(k => `<button type="button" data-act="gfIco" data-k="${k}" aria-label="${k}" title="${k}" aria-pressed="${k === sel}">${ic(k)}</button>`).join('')}</div></div>`; }
     const inp = c.opts ? `<select id="${id}" name="${c.k}">${c.opts.map(x => { const [a, b] = Array.isArray(x) ? x : [x, x]; return `<option value="${esc(a)}"${String(a) === String(val) ? ' selected' : ''}>${esc(b)}</option>`; }).join('')}</select>`
       : `<input id="${id}" name="${c.k}" type="${c.type === 'date' || c.type === 'color' ? c.type : 'text'}" ${c.type === 'money' ? 'inputmode="decimal"' : c.type === 'int' ? 'inputmode="numeric"' : ''} ${c.max ? `maxlength="${c.max}"` : ''} ${c.ro ? 'readonly' : ''} autocomplete="off" value="${esc(val)}">`;
     return `<label class="f" for="${id}"><span>${esc(c.label)}</span>${inp}${c.hint ? `<small>${esc(c.hint)}</small>` : ''}</label>`;
@@ -638,7 +691,7 @@ function formRec(id) {
     titulo: r ? 'Editar recurrente' : 'Nuevo recurrente', valores: r ? { ...r, cat: r.tipo + '|' + r.categoria } : { proximaFecha: hoy(), frecuencia: 'Mensual' },
     nota: 'Se registra solo, cada día que toque, alrededor de las 5 am.',
     campos: [{ k: 'descripcion', label: 'Descripción', max: 60 }, { k: 'monto', label: 'Monto', type: 'money' },
-      { k: 'cat', label: 'Categoría', opts: cats.map(c => [c.tipo + '|' + c.nombre, `${c.icono} ${c.nombre} (${c.tipo})`]) },
+      { k: 'cat', label: 'Categoría', opts: cats.map(c => [c.tipo + '|' + c.nombre, `${c.nombre} (${c.tipo})`]) },
       { k: 'cuenta', label: 'Cuenta', opts: ctas().map(c => c.nombre) }, { k: 'frecuencia', label: 'Frecuencia', opts: ['Mensual', 'Quincenal', 'Semanal', 'Anual'], hint: 'Quincenal = día 15 y último día del mes.' },
       { k: 'proximaFecha', label: 'Próxima fecha', type: 'date' }, { k: 'activo', label: 'Activo', opts: ['Sí', 'No'] }],
     guardar: v => { const [tipo, categoria] = v.cat.split('|'); delete v.cat; return ['recurrentes', { op: 'guardar', datos: { ...v, tipo, categoria, id: r ? r.id : undefined } }]; },
@@ -659,9 +712,9 @@ function formMeta(id) {
 function formCat(nombre, tipo) {
   const c = nombre ? catDe(nombre, tipo) : null;
   abrirForm({
-    titulo: c ? c.nombre : 'Nueva categoría', valores: c || { tipo: 'Gasto', icono: '📦', color: '#94a3b8' },
+    titulo: c ? c.nombre : 'Nueva categoría', valores: c || { tipo: 'Gasto', icono: 'otros', color: '#94a3b8' },
     campos: [...(c ? [] : [{ k: 'nombre', label: 'Nombre', max: 40 }, { k: 'tipo', label: 'Tipo', opts: ['Gasto', 'Ingreso'] }]),
-      { k: 'icono', label: 'Ícono (emoji)', max: 4 }, { k: 'color', label: 'Color', type: 'color' },
+      { k: 'icono', label: 'Ícono', type: 'icono' }, { k: 'color', label: 'Color', type: 'color' },
       { k: 'presupuesto', label: 'Presupuesto mensual', type: 'money', hint: 'Déjalo vacío si no quieres tope. Solo aplica a gastos.' },
       { k: 'activa', label: 'Activa', opts: ['Sí', 'No'] }],
     guardar: v => ['categorias', { op: 'guardar', datos: c ? { ...v, nombre: c.nombre, tipo: c.tipo } : v }],
@@ -713,6 +766,7 @@ const A = {
     });
   },
   cuenta(el) { formCuenta(el.dataset.id); }, rec(el) { formRec(el.dataset.id); }, meta(el) { formMeta(el.dataset.id); }, cat(el) { formCat(el.dataset.c, el.dataset.t); },
+  gfIco(el) { const f = el.closest('form'); f.elements.icono.value = el.dataset.k; f.querySelectorAll('[data-act=gfIco]').forEach(b => b.setAttribute('aria-pressed', b === el)); },
   gfEliminar() { confirmar('¿Eliminar? No se puede deshacer.', 'Eliminar', async () => { const r = GF.eliminar(); if (await escribir(r[0], r[1], 'Eliminado ✓')) cerrar(); }); },
   msiEliminar(el) { confirmar('¿Eliminar esta compra a MSI? También se borrará el gasto y bajará la deuda de la tarjeta.', 'Eliminar', () => escribir('msi', { op: 'eliminar', datos: { id: el.dataset.id } }, 'Eliminado ✓')); },
   desconectar() { confirmar('¿Desconectar este dispositivo? Tus datos siguen en tu Google Sheet; solo se borra lo guardado aquí.', 'Desconectar', () => { const p = cola(); Object.keys(localStorage).filter(k => k.startsWith('df_')).forEach(k => localStorage.removeItem(k)); if (p.length) guardarCola(p); location.reload(); }); },
